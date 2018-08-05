@@ -1,4 +1,4 @@
-import pattern as pypattern
+from pattern import *
 
 class Track:
     """Track definitions"""
@@ -8,4 +8,11 @@ class Track:
         self.port = 0
         self.channel = 1
         self.patterns = []
+        self.references = []
+
+    def AddPattern(pattern):
+        self.patterns.append(pattern)
+
+    def RemovePattern(pattern):
+        self.patterns.remove(pattern)
 

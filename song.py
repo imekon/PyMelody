@@ -1,4 +1,4 @@
-import track as pytrack
+from track import *
 
 class Song:
     """Song definition"""
@@ -15,8 +15,15 @@ class Song:
         self.CreateTrack("Drums", 10)
 
     def CreateTrack(self, name, channel):
-        track = pytrack.Track()
+        track = Track()
         track.name = name
         track.channel = channel
         self.tracks.append(track)
         return track
+
+    def FindTrack(self, channel):
+        for track in self.tracks:
+            if track.channel == channel:
+                return track
+
+        return None

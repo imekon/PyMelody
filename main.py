@@ -2,9 +2,9 @@ import wx
 import wx.aui as wxaui
 import wx.propgrid as wxpg
 
-import song as pysong
+from song import *
 
-import songpanel as pysongpanel
+from songpanel import *
 
 class ProjectTree(wx.TreeCtrl):
     def __init__(self, parent, id, pos, size, style):
@@ -48,10 +48,10 @@ class PatternPanel(wx.Panel):
 class MainWindow(wx.Frame):
     def __init__(self, parent, title):
         # setup
-        wx.Frame.__init__(self, parent, title=title, size=(1024,600))
+        wx.Frame.__init__(self, parent, title=title, size=(1280, 800))
 
         # song
-        song = pysong.Song()
+        song = Song()
         
         # icon
         icon = wx.Icon()
@@ -93,7 +93,7 @@ class MainWindow(wx.Frame):
         propertyPanel = PropertyPanel(self)
 
         # Tag pages
-        songPanel = pysongpanel.SongPanel(self)
+        songPanel = SongPanel(self, song)
         patternPanel= PatternPanel(self)
         
         tabPanel = wxaui.AuiNotebook(self)
@@ -107,7 +107,7 @@ class MainWindow(wx.Frame):
 
         hBox = wx.BoxSizer(wx.HORIZONTAL)
         hBox.Add(vBox, 1, wx.EXPAND)
-        hBox.Add(tabPanel, 2, wx.EXPAND)
+        hBox.Add(tabPanel, 5, wx.EXPAND)
 
         self.SetSizer(hBox)
         self.SetAutoLayout(1)
