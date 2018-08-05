@@ -5,6 +5,7 @@ import wx.propgrid as wxpg
 from song import *
 
 from songpanel import *
+from patternpanel import *
 
 class ProjectTree(wx.TreeCtrl):
     def __init__(self, parent, id, pos, size, style):
@@ -39,11 +40,6 @@ class PropertyPanel(wx.Panel):
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self.pg, 1, wx.EXPAND)
         self.SetSizer(sizer)
-
-class PatternPanel(wx.Panel):
-    def __init__(self, parent):
-        wx.Panel.__init__(self, parent)
-
 
 class MainWindow(wx.Frame):
     def __init__(self, parent, title):
