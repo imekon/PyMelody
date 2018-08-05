@@ -4,6 +4,8 @@ import wx.propgrid as wxpg
 
 import song as pysong
 
+import songpanel as pysongpanel
+
 class ProjectTree(wx.TreeCtrl):
     def __init__(self, parent, id, pos, size, style):
         wx.TreeCtrl.__init__(self, parent, id, pos, size, style)
@@ -37,10 +39,6 @@ class PropertyPanel(wx.Panel):
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self.pg, 1, wx.EXPAND)
         self.SetSizer(sizer)
-
-class SongPanel(wx.Panel):
-    def __init__(self, parent):
-        wx.Panel.__init__(self, parent)
 
 class PatternPanel(wx.Panel):
     def __init__(self, parent):
@@ -95,7 +93,7 @@ class MainWindow(wx.Frame):
         propertyPanel = PropertyPanel(self)
 
         # Tag pages
-        songPanel = SongPanel(self)
+        songPanel = pysongpanel.SongPanel(self)
         patternPanel= PatternPanel(self)
         
         tabPanel = wxaui.AuiNotebook(self)
