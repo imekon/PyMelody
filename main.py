@@ -1,5 +1,8 @@
 import wx
+import wx.aui as wxaui
 import wx.propgrid as wxpg
+
+import song as pysong
 
 class ProjectTree(wx.TreeCtrl):
     def __init__(self, parent, id, pos, size, style):
@@ -12,7 +15,7 @@ class ProjectPanel(wx.Panel):
         self.tree = ProjectTree(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TR_HAS_BUTTONS)
         self.root = self.tree.AddRoot('Project')
         self.tree.SetItemData(self.root, ('key', 'value'))
-        os = self.tree.AppendItem(self.root, 'Camera')
+        os = self.tree.AppendItem(self.root, 'Tracks')
         self.tree.Expand(self.root)
 
         sizer = wx.BoxSizer(wx.VERTICAL)
@@ -29,39 +32,75 @@ class PropertyPanel(wx.Panel):
 
         self.pg.AddPage("Properties")
         self.pg.Append(wxpg.PropertyCategory("Basic"))
-        self.pg.Append(wxpg.StringProperty("Name", value="Camera"))
+        self.pg.Append(wxpg.StringProperty("Name", value="Lead"))
 
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self.pg, 1, wx.EXPAND)
         self.SetSizer(sizer)
+
+class SongPanel(wx.Panel):
+    def __init__(self, parent):
+        wx.Panel.__init__(self, parent)
+
+class PatternPanel(wx.Panel):
+    def __init__(self, parent):
+        wx.Panel.__init__(self, parent)
+
 
 class MainWindow(wx.Frame):
     def __init__(self, parent, title):
         # setup
         wx.Frame.__init__(self, parent, title=title, size=(1024,600))
 
+        # song
+        song = pysong.Song()
+        
+        # icon
+        icon = wx.Icon()
+        icon.CopyFromBitmap(wx.Bitmap("melody_mine.gif", wx.BITMAP_TYPE_GIF))
+        self.SetIcon(icon)
+
         # status bar
         self.CreateStatusBar()
 
         # file menu
         fileMenu = wx.Menu()
-        emi = fileMenu.Append(wx.ID_EXIT, "E&xit", "Close the application")
+        newItem = fileMenu.Append(wx.ID_NEW, "&New", "Create new document")
+        openItem = fileMenu.Append(wx.ID_OPEN, "&Open...", "Open existing document")
+        saveItem = fileMenu.Append(wx.ID_SAVE, "&Save", "Save document")
+        saveAsItem = fileMenu.Append(wx.ID_SAVEAS, "Save &As...", "Save document with name")
+        exitItem = fileMenu.Append(wx.ID_EXIT, "E&xit", "Close the application")
+
+        # edit menu
+        editMenu = wx.Menu()
+        cutItem = editMenu.Append(wx.ID_CUT, "C&ut")
+        copyItem = editMenu.Append(wx.ID_COPY, "&Copy")
+        pasteItem = editMenu.Append(wx.ID_PASTE, "&Paste")
+        editMenu.AppendSeparator()
+        deleteItem = editMenu.Append(wx.NewId(), "&Delete")
 
         # help menu
         helpMenu = wx.Menu()
-        hmi = helpMenu.Append(wx.ID_ABOUT, "&About...", "About this application")
+        aboutItem = helpMenu.Append(wx.ID_ABOUT, "&About...", "About this application")
 
         # menu bar
         menuBar = wx.MenuBar()
         menuBar.Append(fileMenu, "&File")
+        menuBar.Append(editMenu, "&Edit")
         menuBar.Append(helpMenu, "&Help")
         self.SetMenuBar(menuBar)
 
         # panels
         projectPanel = ProjectPanel(self)
         propertyPanel = PropertyPanel(self)
-        # clientPanel = GLFrame(self, wx.ID_ANY, 'GL Window')
-        clientPanel = wx.Panel(self)
+
+        # Tag pages
+        songPanel = SongPanel(self)
+        patternPanel= PatternPanel(self)
+        
+        tabPanel = wxaui.AuiNotebook(self)
+        tabPanel.AddPage(songPanel, "Song")
+        tabPanel.AddPage(patternPanel, "Patterns")
 
         # sizers
         vBox = wx.BoxSizer(wx.VERTICAL)
@@ -70,14 +109,14 @@ class MainWindow(wx.Frame):
 
         hBox = wx.BoxSizer(wx.HORIZONTAL)
         hBox.Add(vBox, 1, wx.EXPAND)
-        hBox.Add(clientPanel, 2, wx.EXPAND)
+        hBox.Add(tabPanel, 2, wx.EXPAND)
 
         self.SetSizer(hBox)
         self.SetAutoLayout(1)
 
         # binding/events
-        self.Bind(wx.EVT_MENU, self.OnAbout, hmi)
-        self.Bind(wx.EVT_MENU, self.OnExit, emi)
+        self.Bind(wx.EVT_MENU, self.OnAbout, aboutItem)
+        self.Bind(wx.EVT_MENU, self.OnExit, exitItem)
         
         self.Show(True)
 
