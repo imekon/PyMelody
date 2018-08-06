@@ -1,3 +1,5 @@
+import mido
+
 import wx
 import wx.aui as wxaui
 import wx.propgrid as wxpg
