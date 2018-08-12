@@ -49,7 +49,7 @@ class MainWindow(wx.Frame):
         wx.Frame.__init__(self, parent, title=title, size=(1280, 800))
 
         # song
-        song = Song()
+        self.song = Song()
         
         # icon
         icon = wx.Icon()
@@ -63,6 +63,10 @@ class MainWindow(wx.Frame):
         fileMenu = wx.Menu()
         newItem = fileMenu.Append(wx.ID_NEW, "&New", "Create new document")
         openItem = fileMenu.Append(wx.ID_OPEN, "&Open...", "Open existing document")
+        fileMenu.AppendSeparator()
+        importItem = fileMenu.Append(wx.ID_ANY, "&Import...", "Import MIDI file")
+        exportItem = fileMenu.Append(wx.ID_ANY, "&Export...", "Export MIDI file")
+        fileMenu.AppendSeparator()
         saveItem = fileMenu.Append(wx.ID_SAVE, "&Save", "Save document")
         saveAsItem = fileMenu.Append(wx.ID_SAVEAS, "Save &As...", "Save document with name")
         exitItem = fileMenu.Append(wx.ID_EXIT, "E&xit", "Close the application")
@@ -91,7 +95,7 @@ class MainWindow(wx.Frame):
         propertyPanel = PropertyPanel(self)
 
         # Tag pages
-        songPanel = SongPanel(self, song)
+        songPanel = SongPanel(self, self.song)
         patternPanel= PatternPanel(self)
         
         tabPanel = wxaui.AuiNotebook(self)
@@ -111,15 +115,34 @@ class MainWindow(wx.Frame):
         self.SetAutoLayout(1)
 
         # binding/events
+        self.Bind(wx.EVT_MENU, self.OnImport, importItem)
+        self.Bind(wx.EVT_MENU, self.OnExport, exportItem)
         self.Bind(wx.EVT_MENU, self.OnAbout, aboutItem)
         self.Bind(wx.EVT_MENU, self.OnExit, exitItem)
         
         self.Show(True)
 
+    def OnImport(self, event):
+        with wx.FileDialog(self, "Open MIDI file", wildcard="MIDI files (*.mid)|*.mid",
+                           style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
+            if fileDialog.ShowModal() == wx.ID_CANCEL:
+                return
+
+            pathname = fileDialog.GetPath()
+            self.song.Import(pathname)
+
+    def OnExport(self, event):
+        with wx.FileDialog(self, "Export MIDI file", wildcard="MIDI files (*.mid)|*.mid",
+                           style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT) as fileDialog:
+            if fileDialog.ShowModal() == wx.ID_CANCEL:
+                return
+
+            pathname = fileDialog.GetPath()
+            self.song.Export(pathname)
+
     def OnAbout(self, event):
-        dlg = wx.MessageDialog(self, "Melody Mine music editor", "About Melody Mine", wx.OK)
-        dlg.ShowModal()
-        dlg.Destroy()
+        with wx.MessageDialog(self, "Melody Mine music editor", "About Melody Mine", wx.OK) as dlg:
+            dlg.ShowModal()
 
     def OnExit(self, e):
         self.Close(True)

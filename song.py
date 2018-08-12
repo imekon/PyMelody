@@ -27,3 +27,9 @@ class Song:
                 return track
 
         return None
+
+    def Import(self, filename):
+        pass
+
+    def Export(self, filename):
+        pass
